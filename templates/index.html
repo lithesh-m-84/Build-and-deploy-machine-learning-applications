@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Churn Prediction & Segmentation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>📊 Customer Churn Prediction & Segmentation</h1>
+            <p class="subtitle">Machine Learning Analytics Dashboard</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <button class="nav-btn active" onclick="showSection('dashboard')">📊 Dashboard</button>
+            <button class="nav-btn" onclick="showSection('models')">🤖 ML Models</button>
+            <button class="nav-btn" onclick="showSection('clustering')">🎯 Clustering</button>
+            <button class="nav-btn" onclick="showSection('analytics')">📈 Analytics</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <h2>Data Overview</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">👥</div>
+                    <div class="metric-value" id="total-customers">-</div>
+                    <div class="metric-label">Total Customers</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">⚠️</div>
+                    <div class="metric-value" id="churned-customers">-</div>
+                    <div class="metric-label">Churned Customers</div>
+                </div>
+                <div class="metric-card danger">
+                    <div class="metric-icon">📉</div>
+                    <div class="metric-value" id="churn-rate">-</div>
+                    <div class="metric-label">Churn Rate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">💰</div>
+                    <div class="metric-value" id="avg-charge">-</div>
+                    <div class="metric-label">Avg Monthly Charge</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>Churn Distribution</h3>
+                    <canvas id="churnChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Churn by Contract Type</h3>
+                    <canvas id="contractChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ML Models Section -->
+        <section id="models" class="section">
+            <h2>Machine Learning Models</h2>
+            <div class="model-controls">
+                <button onclick="trainModels()" class="btn-primary">🚀 Train Models</button>
+            </div>
+            
+            <div id="model-results" class="hidden">
+                <div class="models-grid">
+                    <div class="model-card">
+                        <h3>🌲 Random Forest</h3>
+                        <div class="metrics-list">
+                            <div class="metric-item">
+                                <span class="metric-name">Accuracy:</span>
+                                <span class="metric-value" id="rf-accuracy">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-name">Precision:</span>
+                                <span class="metric-value" id="rf-precision">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-name">Recall:</span>
+                                <span class="metric-value" id="rf-recall">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-name">F1-Score:</span>
+                                <span class="metric-value" id="rf-f1">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-name">AUC-ROC:</span>
+                                <span class="metric-value" id="rf-auc">-</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="rf-confusion"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="model-card">
+                        <h3>🌿 Gradient Boosting</h3>
+                        <div class="metrics-list">
+                            <div class="metric-item">
+                                <span class="metric-name">Accuracy:</span>
+                                <span class="metric-value" id="gb-accuracy">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-name">Precision:</span>
+                                <span class="metric-value" id="gb-precision">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-name">Recall:</span>
+                                <span class="metric-value" id="gb-recall">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-name">F1-Score:</span>
+                                <span class="metric-value" id="gb-f1">-</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-name">AUC-ROC:</span>
+                                <span class="metric-value" id="gb-auc">-</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="gb-confusion"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container full-width">
+                    <h3>Feature Importance</h3>
+                    <canvas id="importanceChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Clustering Section -->
+        <section id="clustering" class="section">
+            <h2>Customer Segmentation (K-Means)</h2>
+            <div class="model-controls">
+                <button onclick="loadClustering()" class="btn-primary">🔍 Analyze Segments</button>
+            </div>
+
+            <div id="clustering-results" class="hidden">
+                <div class="cluster-grid">
+                    <!-- Cluster cards will be inserted here -->
+                </div>
+                <div class="chart-container full-width">
+                    <h3>Cluster Distribution</h3>
+                    <canvas id="clusterChart"></canvas>
+                </div>
+                <div class="chart-container full-width">
+                    <h3>Churn Rate by Cluster</h3>
+                    <canvas id="churnClusterChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="section">
+            <h2>Advanced Analytics</h2>
+            <div class="model-controls">
+                <button onclick="loadPCA()" class="btn-primary">📊 PCA Analysis</button>
+            </div>
+
+            <div id="pca-results" class="hidden">
+                <div class="info-box">
+                    <h3>Principal Component Analysis</h3>
+                    <p>Total Variance Explained: <strong id="total-variance">-</strong>%</p>
+                </div>
+                <div class="chart-container full-width">
+                    <canvas id="pcaChart"></canvas>
+                </div>
+                <div class="chart-container full-width">
+                    <canvas id="pcaCumulativeChart"></canvas>
+                </div>
+
+                <div class="insights-box">
+                    <h3>💡 Key Insights</h3>
+                    <ul>
+                        <li>Customer service calls are the strongest churn predictor (21.52% importance)</li>
+                        <li>Tenure length inversely correlates with churn probability</li>
+                        <li>Month-to-month contracts show highest churn rates (65.6%)</li>
+                        <li>Monthly charges significantly impact customer retention</li>
+                        <li>PCA reduces feature space to 10 components while retaining 64% variance</li>
+                        <li>Cluster 2 has the highest churn rate (55%) and needs immediate attention</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Customer Churn Prediction & Segmentation using ML</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
+
